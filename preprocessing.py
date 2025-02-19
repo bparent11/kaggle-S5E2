@@ -36,7 +36,7 @@ def preprocess(df, submission=False):
         for column in categorical_columns:
             gb = df.groupby(column).agg(
                 Price_mean = ("Price", "mean"),
-                Count = ("Price", "count"),
+                #Count = ("Price", "count"),
                 STD = ("Price", "std"),
                 VAR = ("Price", "var")
             )
@@ -44,11 +44,11 @@ def preprocess(df, submission=False):
             for index in gb.index:
                 key = f"{column}_{index}"
                 mean = gb.loc[index, "Price_mean"]
-                count = gb.loc[index, "Count"]
+                #count = gb.loc[index, "Count"]
                 stdeviation = gb.loc[index, "STD"]
                 var = gb.loc[index, "VAR"]
 
-                target_encoding_dict[key] = [mean, count, stdeviation, var]
+                target_encoding_dict[key] = [mean, stdeviation, var]
                 #print(key)
                 #print(target_encoding_dict[key])
             
@@ -64,9 +64,9 @@ def preprocess(df, submission=False):
             initial_column = key.split("_")[0]
             corresponding_value = key.split("_")[1]
             
-            count=0
-            for aggfunc in ["Price_mean", "Count", "STD", "VAR"]:
-                df.loc[df[initial_column] == corresponding_value, f"{aggfunc}_{initial_column}"] = target_encoding_dict[key][count]
-                count += 1
+            iteration=0
+            for aggfunc in ["Price_mean", "STD", "VAR"]:
+                df.loc[df[initial_column] == corresponding_value, f"{aggfunc}_{initial_column}"] = target_encoding_dict[key][iteration]
+                iteration += 1
 
     return df

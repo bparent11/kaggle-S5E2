@@ -3,6 +3,14 @@ import numpy as np
 
 def preprocess(df):
 
+    df.loc[df['Laptop Compartment'] == "Yes", "Laptop Compartment"] = int(1)
+    df.loc[df['Laptop Compartment'] == "No", "Laptop Compartment"] = int(0)
+    df['Laptop Compartment'] = df['Laptop Compartment'].astype(float)
+
+    df.loc[df['Waterproof'] == "Yes", "Waterproof"] = int(1)
+    df.loc[df['Waterproof'] == "No", "Waterproof"] = int(0)
+    df['Waterproof'] = df['Waterproof'].astype(float)
+
     df[df.select_dtypes(include='object').columns] = df.select_dtypes(include='object').fillna('Inconnu')
     df[df.select_dtypes(include='number').columns] = df.select_dtypes(include='number').fillna(-1)
 
@@ -21,10 +29,6 @@ def preprocess(df):
 
     # because that's already done with line 6 and OHE.
 
-    df.loc[df['Laptop Compartment'] == "Yes", "Laptop Compartment"] = int(1)
-    df.loc[df['Laptop Compartment'] == "No", "Laptop Compartment"] = int(0)
 
-    df.loc[df['Waterproof'] == "Yes", "Waterproof"] = int(1)
-    df.loc[df['Waterproof'] == "No", "Waterproof"] = int(0)
 
     return df

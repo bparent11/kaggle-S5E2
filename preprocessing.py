@@ -1,8 +1,8 @@
 import pandas as pd
 import numpy as np
 
-def preprocess(df):
-
+def preprocess(df, submission=False):
+    global target_encoding_dict
     df.loc[df['Laptop Compartment'] == "Yes", "Laptop Compartment"] = int(1)
     df.loc[df['Laptop Compartment'] == "No", "Laptop Compartment"] = int(0)
     df['Laptop Compartment'] = df['Laptop Compartment'].astype(float)
@@ -15,7 +15,7 @@ def preprocess(df):
     df[df.select_dtypes(include='number').columns] = df.select_dtypes(include='number').fillna(-1)
 
     numerical_columns = df.select_dtypes(include='number')
-    #categorical_columns = df.select_dtypes(include='object')
+    categorical_columns = df.select_dtypes(include='object')
 
     for column in numerical_columns:
         if (df[column] == -1).sum() > 0:
@@ -29,6 +29,44 @@ def preprocess(df):
 
     # because that's already done with line 6 and OHE.
 
+    """TARGET ENCODING | Mean, Count, STD and VAR"""
 
+    if submission == False:
+        target_encoding_dict = {}
+        for column in categorical_columns:
+            gb = df.groupby(column).agg(
+                Price_mean = ("Price", "mean"),
+                Count = ("Price", "count"),
+                STD = ("Price", "std"),
+                VAR = ("Price", "var")
+            )
+
+            for index in gb.index:
+                key = f"{column}_{index}"
+                mean = gb.loc[index, "Price_mean"]
+                count = gb.loc[index, "Count"]
+                stdeviation = gb.loc[index, "STD"]
+                var = gb.loc[index, "VAR"]
+
+                target_encoding_dict[key] = [mean, count, stdeviation, var]
+                #print(key)
+                #print(target_encoding_dict[key])
+            
+            # Renommer les colonnes pour éviter les conflits
+            gb.columns = [f"{col}_{column}" for col in gb.columns]
+
+            # Joindre les résultats au DataFrame principal
+            df = df.merge(gb, on=column, how='left')
+
+
+    if submission == True:
+        for key in target_encoding_dict:
+            initial_column = key.split("_")[0]
+            corresponding_value = key.split("_")[1]
+            
+            count=0
+            for aggfunc in ["Price_mean", "Count", "STD", "VAR"]:
+                df.loc[df[initial_column] == corresponding_value, f"{aggfunc}_{initial_column}"] = target_encoding_dict[key][count]
+                count += 1
 
     return df

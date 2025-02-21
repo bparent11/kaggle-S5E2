@@ -47,3 +47,6 @@ import json
 file_path = 'test_scores_sorted_cv=4_300k_lines.json'
 with open(file_path, 'w') as json_file:
     json.dump(sorted_dict, json_file, indent=4)
+
+
+## 44 minutes to do it

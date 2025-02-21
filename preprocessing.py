@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import json
 
 def preprocess(df, submission=False):
     global target_encoding_dict
@@ -66,7 +67,18 @@ def preprocess(df, submission=False):
             
             iteration=0
             for aggfunc in ["Price_mean", "Count", "STD", "VAR"]:
-                df.loc[df[initial_column] == corresponding_value, f"{aggfunc}_{initial_column}"] = target_encoding_dict[key][iteration]
+                df.loc[df[initial_column] == corresponding_value, f"{initial_column}_{aggfunc}"] = target_encoding_dict[key][iteration]
                 iteration += 1
+
+    #with open('test_scores_sorted_cv=2_150k_lines.json', 'r') as json_file:
+    #    relevant_combinations = json.load(json_file)
+    #
+    #combinations_to_add = list(relevant_combinations.keys())[:20]
+#
+    #for combination in combinations_to_add:
+    #    separation = combination.split("xxx")
+    #    first_col = separation[0]
+    #    second_col = separation[1]
+    #    df[combination] = df[first_col] * df[second_col]
 
     return df

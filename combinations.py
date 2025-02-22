@@ -8,7 +8,7 @@ def finding_best_combinations_in_pairs(X, y):
     # combinations = list(product(X.columns, X.columns)) # cartesian product
     columns_combinations = list(combinations(X.columns, 2)) # combinations without duplicates
     combinations_filtered = list(filter(lambda tuple: tuple[0].split("_")[0] != tuple[1].split("_")[0], columns_combinations)) #filtered
-
+    print(combinations_filtered)
     combination_names = [f"{tpl[0]}xxx{tpl[1]}" for tpl in combinations_filtered]
 
     test_score_dict = {}
@@ -31,6 +31,7 @@ def finding_best_combinations_in_pairs(X, y):
         elapsed_time = end_time - start_time
         print(f"Temps écoulé : {elapsed_time:.6f} secondes")
 
+    print("Final compute, without adding any combination !")
     new_col = "no_column_added"
     model = xgb.XGBRegressor()
     cv_results = cross_val_score(model, X, y, cv=KF, scoring='neg_root_mean_squared_error', n_jobs=-1)
@@ -42,3 +43,5 @@ def finding_best_combinations_in_pairs(X, y):
     file_path = 'best_combinations_22_02.json'
     with open(file_path, 'w') as json_file:
         json.dump(sorted_dict, json_file, indent=4)
+
+    return test_score_dict

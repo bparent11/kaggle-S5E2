@@ -9,7 +9,7 @@ def finding_best_combinations_in_pairs(X, y):
     columns_combinations = list(combinations(X.columns, 2)) # combinations without duplicates
     combinations_filtered = list(filter(lambda tuple: tuple[0].split("_")[0] != tuple[1].split("_")[0], columns_combinations)) #filtered
     print(combinations_filtered)
-    combination_names = [f"{tpl[0]}xxx{tpl[1]}" for tpl in combinations_filtered]
+    combination_names = [f"{tpl[0]}*{tpl[1]}" for tpl in combinations_filtered]
 
     test_score_dict = {}
     KF = KFold(n_splits=2, shuffle=True, random_state=42)
@@ -18,7 +18,7 @@ def finding_best_combinations_in_pairs(X, y):
     for index, new_col in enumerate(combination_names, len(combination_names)-len(combination_names)):
         start_time = time.time()
         temporary_X = X.copy()
-        separation = new_col.split("xxx")
+        separation = new_col.split("*")
         first_col = separation[0]
         second_col = separation[1]
         temporary_X[new_col] = temporary_X[first_col] * temporary_X[second_col]

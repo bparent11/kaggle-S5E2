@@ -24,13 +24,6 @@ def preprocess(df, submission=False):
             missing_column_name = f"{column}_Missing"
             df[missing_column_name] = (df[column] == -1).astype(int)
 
-    #for column in categorical_columns:
-    #    if (df[column] == 'Inconnu').sum() > 0:
-    #        missing_column_name = f"{column}_Missing"
-    #        df[missing_column_name] = (df[column] == 'Inconnu').astype(int)
-
-    # because that's already done with line 6 and OHE.
-
     """TARGET ENCODING | Mean, Count, STD and VAR"""
     "nunique", "median", "min", "max", "skew"
 
@@ -44,8 +37,6 @@ def preprocess(df, submission=False):
                 TEVAR = ("Price", "var"),
                 TEnunique = ("Price", "nunique"),
                 TEmedian = ("Price", "median"),
-                TEmin = ("Price", "min"),
-                TEmax = ("Price", "max"),
                 TEskew = ("Price", "skew")
             )
 
@@ -57,11 +48,9 @@ def preprocess(df, submission=False):
                 var = gb.loc[index, "TEVAR"]
                 nunique = gb.loc[index, "TEnunique"]
                 median = gb.loc[index, "TEmedian"]
-                min = gb.loc[index, "TEmin"]
-                max = gb.loc[index, "TEmax"]
                 skew = gb.loc[index, "TEskew"]
 
-                target_encoding_dict[key] = [mean, count, stdeviation, var, nunique, median, min, max, skew]
+                target_encoding_dict[key] = [mean, count, stdeviation, var, nunique, median, skew]
                 #print(key)
                 #print(target_encoding_dict[key])
             
@@ -80,7 +69,7 @@ def preprocess(df, submission=False):
             corresponding_value = key.split("_")[1]
             
             iteration=0
-            for aggfunc in ["mean", "Count", "STD", "VAR", "nunique", "median", "min", "max", "skew"]:
+            for aggfunc in ["mean", "Count", "STD", "VAR", "nunique", "median", "skew"]:
                 df.loc[df[initial_column] == corresponding_value, f"{initial_column}_TE{aggfunc}"] = target_encoding_dict[key][iteration]
                 iteration += 1
 

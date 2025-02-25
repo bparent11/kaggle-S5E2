@@ -4,7 +4,7 @@ import xgboost as xgb
 import time
 
 
-def finding_best_combinations_in_pairs(X, y):
+def finding_best_interactions_by_combinations_of_three(X, y):
     
     # combinations = list(product(X.columns, X.columns)) # cartesian product
     columns_combinations = list(combinations(X.columns, 3)) # combinations without duplicates
@@ -32,7 +32,6 @@ def finding_best_combinations_in_pairs(X, y):
         end_time = time.time()
         elapsed_time = end_time - start_time
         print(f"Temps écoulé : {elapsed_time:.6f} secondes")
-        break
 
     print("Final compute, without adding any combination !")
     new_col = "no_column_added"
